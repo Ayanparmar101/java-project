@@ -2,4 +2,10 @@
 java Chatbot anoymously
 
 
-Run mvn spring-boot:run in the project directory
+#Run 
+
+
+mvn spring-boot:run 
+
+
+in the project directory
