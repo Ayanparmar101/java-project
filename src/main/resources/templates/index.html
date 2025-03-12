@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Anonymous Chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .app-header {
+            background-color: #128C7E;
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .app-title {
+            font-size: 1.2rem;
+        }
+        
+        .chat-container {
+            flex-grow: 1;
+            background-color: #e5ded8;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            padding: 10px;
+            overflow-y: auto;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 7.5px;
+            margin-bottom: 8px;
+            position: relative;
+            word-wrap: break-word;
+        }
+        
+        .message-self {
+            background-color: #dcf8c6;
+            margin-left: auto;
+            border-top-right-radius: 0;
+        }
+        
+        .message-other {
+            background-color: white;
+            margin-right: auto;
+            border-top-left-radius: 0;
+        }
+        
+        .message-nickname {
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #128C7E;
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            color: #999;
+            text-align: right;
+            margin-top: 2px;
+        }
+        
+        .input-container {
+            background-color: #f0f2f5;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .nickname-input {
+            flex: 0 0 auto;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            margin-right: 8px;
+            outline: none;
+            width: 120px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid #ccc;
+            outline: none;
+        }
+        
+        .send-button {
+            background-color: #128C7E;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="app-title">Anonymous Chat</div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <!-- Messages will be displayed here -->
+            <div th:each="msg : ${messages}" th:class="'message ' + (${#strings.equals(msg.nickname, session.nickname)} ? 'message-self' : 'message-other')">
+                <div class="message-nickname" th:text="${msg.nickname}"></div>
+                <div class="message-content" th:text="${msg.content}"></div>
+                <div class="message-time" th:text="${#temporals.format(msg.timestamp, 'HH:mm')}"></div>
+            </div>
+        </div>
+        
+        <form class="input-container" method="post" action="/send" id="messageForm">
+            <input type="text" class="nickname-input" name="nickname" id="nickname" placeholder="Nickname" required>
+            <input type="text" class="message-input" name="content" id="content" placeholder="Type a message" autocomplete="off" required>
+            <button type="submit" class="send-button">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" fill="white"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Scroll to bottom of chat
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Store nickname in session
+            const nicknameInput = document.getElementById('nickname');
+            if (localStorage.getItem('chatNickname')) {
+                nicknameInput.value = localStorage.getItem('chatNickname');
+            }
+            
+            nicknameInput.addEventListener('input', function() {
+                localStorage.setItem('chatNickname', nicknameInput.value);
+            });
+            
+            // WebSocket Connection
+            const socket = new SockJS('/chat-websocket');
+            const stompClient = Stomp.over(socket);
+            
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                
+                stompClient.subscribe('/topic/messages', function(messageOutput) {
+                    const messageBody = JSON.parse(messageOutput.body);
+                    showMessage(messageBody);
+                });
+            });
+            
+            function showMessage(message) {
+                const messageElement = document.createElement('div');
+                const isCurrentUser = message.nickname === nicknameInput.value;
+                messageElement.className = 'message ' + (isCurrentUser ? 'message-self' : 'message-other');
+                
+                const nicknameElement = document.createElement('div');
+                nicknameElement.className = 'message-nickname';
+                nicknameElement.textContent = message.nickname;
+                
+                const contentElement = document.createElement('div');
+                contentElement.className = 'message-content';
+                contentElement.textContent = message.content;
+                
+                const timeElement = document.createElement('div');
+                timeElement.className = 'message-time';
+                const now = new Date();
+                timeElement.textContent = now.getHours().toString().padStart(2, '0') + ':' + 
+                                        now.getMinutes().toString().padStart(2, '0');
+                
+                messageElement.appendChild(nicknameElement);
+                messageElement.appendChild(contentElement);
+                messageElement.appendChild(timeElement);
+                
+                chatContainer.appendChild(messageElement);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Handle form submission with WebSockets
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nickname = nicknameInput.value;
+                const content = document.getElementById('content').value;
+                
+                if (nickname && content) {
+                    const message = {
+                        nickname: nickname,
+                        content: content
+                    };
+                    
+                    stompClient.send("/app/chat", {}, JSON.stringify(message));
+                    document.getElementById('content').value = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
