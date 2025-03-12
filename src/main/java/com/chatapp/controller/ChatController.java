@@ -32,3 +32,11 @@ public class ChatController {
         messageRepository.save(message);
         return "redirect:/";
     }
+ // For WebSocket implementation
+    @MessageMapping("/chat")
+    @SendTo("/topic/messages")
+    public Message sendViaWebSocket(Message message) {
+        messageRepository.save(message);
+        return message;
+    }
+}
