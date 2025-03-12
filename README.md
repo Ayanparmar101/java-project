@@ -2,8 +2,8 @@
 java Chatbot anoymously
 
 
-#Run 
-
+Run |
+    v
 
 mvn spring-boot:run 
 
